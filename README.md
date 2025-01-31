@@ -16,7 +16,7 @@ JustTip is a web application for managing employee tips and work shifts in the s
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone https://github.com/tomicl1/JustTip
 cd justtip
 ```
 
