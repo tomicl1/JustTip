@@ -1,0 +1,108 @@
+@model TipDistributionViewModel
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Businesses</a></li>
+            <li class="breadcrumb-item active">Distribute Tips - @Model.BusinessName</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title mb-0">Distribute Tips - @Model.BusinessName</h2>
+        </div>
+        <div class="card-body">
+            <form id="tipForm" asp-action="CalculateTips" method="post">
+                <input type="hidden" asp-for="BusinessId" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="PeriodStart" class="form-label"></label>
+                            <input asp-for="PeriodStart" class="form-control" type="date" />
+                            <span asp-validation-for="PeriodStart" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="PeriodEnd" class="form-label"></label>
+                            <input asp-for="PeriodEnd" class="form-control" type="date" />
+                            <span asp-validation-for="PeriodEnd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="TotalTipAmount" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="TotalTipAmount" class="form-control" type="number" step="0.01" min="0" />
+                            </div>
+                            <span asp-validation-for="TotalTipAmount" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Calculate Distribution</button>
+                </div>
+            </form>
+
+            @if (Model.Employees.Any())
+            {
+                <hr />
+                <form asp-action="SaveTipDistribution" method="post">
+                    <input type="hidden" asp-for="BusinessId" />
+                    <input type="hidden" asp-for="PeriodStart" />
+                    <input type="hidden" asp-for="PeriodEnd" />
+                    <input type="hidden" asp-for="TotalTipAmount" />
+
+                    <h4 class="mb-3">Distribution Preview</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th class="text-center">Days Worked</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Employees.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Model.Employees[i].EmployeeName
+                                            <input type="hidden" name="Employees[@i].EmployeeId" value="@Model.Employees[i].EmployeeId" />
+                                            <input type="hidden" name="Employees[@i].EmployeeName" value="@Model.Employees[i].EmployeeName" />
+                                            <input type="hidden" name="Employees[@i].DaysWorked" value="@Model.Employees[i].DaysWorked" />
+                                            <input type="hidden" name="Employees[@i].TipAmount" value="@Model.Employees[i].TipAmount" />
+                                        </td>
+                                        <td class="text-center">@Model.Employees[i].DaysWorked</td>
+                                        <td class="text-end">@Model.Employees[i].TipAmount.ToString("C")</td>
+                                    </tr>
+                                }
+                                <tr class="table-info">
+                                    <th>Total</th>
+                                    <th class="text-center">@Model.Employees.Sum(e => e.DaysWorked)</th>
+                                    <th class="text-end">@Model.TotalTipAmount.ToString("C")</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="TipDistribution" asp-route-id="@Model.BusinessId" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success">Save Distribution</button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

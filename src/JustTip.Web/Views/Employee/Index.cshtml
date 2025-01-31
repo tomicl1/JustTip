@@ -1,0 +1,117 @@
+@model EmployeeListViewModel
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Business" asp-action="Index">Businesses</a></li>
+            <li class="breadcrumb-item active">@Model.BusinessName</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>@Model.BusinessName</h1>
+            <p class="text-muted">Employee Management</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Business" asp-action="TipDistribution" 
+               asp-route-id="@Model.BusinessId" 
+               class="btn btn-success">
+                <i class="bi bi-cash"></i> Distribute Tips
+            </a>
+            <a asp-action="Create" asp-route-businessId="@Model.BusinessId" 
+               class="btn btn-primary">
+                <i class="bi bi-person-plus"></i> Add Employee
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Employees.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            No employees found. Click the "Add Employee" button to add your first employee.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var employee in Model.Employees)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1">@employee.Name</h5>
+                                    <p class="text-muted mb-0">@employee.Position</p>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm" 
+                                            data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a asp-action="Edit" 
+                                               asp-route-businessId="@Model.BusinessId" 
+                                               asp-route-id="@employee.Id" 
+                                               class="dropdown-item">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Delete" 
+                                               asp-route-businessId="@Model.BusinessId" 
+                                               asp-route-id="@employee.Id" 
+                                               class="dropdown-item text-danger">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Email:</dt>
+                                <dd class="col-sm-8">
+                                    <a href="mailto:@employee.Email">@employee.Email</a>
+                                </dd>
+
+                                <dt class="col-sm-4">Phone:</dt>
+                                <dd class="col-sm-8">
+                                    <a href="tel:@employee.Phone">@employee.Phone</a>
+                                </dd>
+
+                                <dt class="col-sm-4">Last Tip:</dt>
+                                <dd class="col-sm-8">
+                                    @(employee.LastTipAmount?.ToString("C") ?? "No tips yet")
+                                </dd>
+                            </dl>
+
+                            <div class="mt-3">
+                                <a asp-action="ManageShifts" 
+                                   asp-route-businessId="@Model.BusinessId" 
+                                   asp-route-id="@employee.Id" 
+                                   class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bi bi-calendar"></i> Manage Shifts
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+} 

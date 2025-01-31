@@ -1,0 +1,78 @@
+@model List<BusinessDto>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Businesses</h1>
+            <p class="text-muted">Manage your businesses and their employees</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Business
+        </a>
+    </div>
+
+    <div class="row">
+        @foreach (var business in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@business.Name</h5>
+                        <p class="text-muted mb-3">
+                            <i class="bi bi-people"></i> @business.EmployeeCount Employees
+                        </p>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Employee" asp-action="Index" 
+                               asp-route-businessId="@business.Id" 
+                               class="btn btn-outline-primary flex-grow-1">
+                                <i class="bi bi-people"></i> Employees
+                            </a>
+                            <a asp-action="TipDistribution" asp-route-id="@business.Id" 
+                               class="btn btn-outline-success flex-grow-1">
+                                <i class="bi bi-cash"></i> Distribute Tips
+                            </a>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" 
+                                        data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a asp-action="Edit" asp-route-id="@business.Id" 
+                                           class="dropdown-item">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-action="Delete" asp-route-id="@business.Id" 
+                                           class="dropdown-item text-danger">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No businesses found. 
+            <a asp-action="Create" class="alert-link">Add your first business</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Enable Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+} 
